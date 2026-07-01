@@ -67,13 +67,19 @@ export default function Intro({ onFinish }: IntroProps) {
   useEffect(() => {
     const mountedAt = Date.now()
     const GRACE_MS = 900
-    const onInteract = () => {
-      setOfferSound(true)
-      // First gesture satisfies the browser's autoplay policy — start sound now.
+    // The browser blocks audio until the user interacts — so start (and keep)
+    // the clip playing on the very first gesture of any kind. The element is
+    // persistent, so it then plays the full clip on loop across the whole site.
+    const startAudio = () => {
       const audio = audioRef.current
       if (audio && !audio.muted) void audio.play().catch(() => {})
     }
+    const onInteract = () => {
+      setOfferSound(true)
+      startAudio()
+    }
     const onDismiss = () => {
+      startAudio()
       if (Date.now() - mountedAt < GRACE_MS) return
       dismiss()
     }
@@ -104,7 +110,17 @@ export default function Intro({ onFinish }: IntroProps) {
   }
 
   return (
-    <AnimatePresence>
+    <>
+      {/*
+        Looping intro audio lives OUTSIDE the AnimatePresence so it keeps playing
+        after the intro dissolves — otherwise the element would unmount and the
+        clip would be cut off after only a few seconds. Sound is on by default.
+      */}
+      <audio id="intro-audio" ref={audioRef} loop autoPlay preload="auto">
+        <source src={`${import.meta.env.BASE_URL}audio/audio.mp3`} type="audio/mpeg" />
+      </audio>
+
+      <AnimatePresence>
       {visible && (
         <motion.div
           key="intro"
@@ -116,11 +132,6 @@ export default function Intro({ onFinish }: IntroProps) {
           role="dialog"
           aria-label="Intro"
         >
-          {/* Hidden looping intro audio (public/audio/audio.mp3). Sound is on by default. */}
-          <audio id="intro-audio" ref={audioRef} loop autoPlay preload="auto">
-            <source src={`${import.meta.env.BASE_URL}audio/audio.mp3`} type="audio/mpeg" />
-          </audio>
-
           <motion.h1
             className="select-none text-center text-5xl font-black tracking-tight md:text-7xl"
             style={{
@@ -190,6 +201,7 @@ export default function Intro({ onFinish }: IntroProps) {
           )}
         </motion.div>
       )}
-    </AnimatePresence>
+      </AnimatePresence>
+    </>
   )
 }
