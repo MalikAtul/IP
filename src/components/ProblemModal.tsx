@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
 import type { Problem } from '../types'
 import CodePanel from './CodePanel'
@@ -7,9 +8,10 @@ import { getLenis } from '../lib/useSmoothScroll'
 interface Props {
   problem: Problem
   onClose: () => void
+  onResult?: (ok: boolean) => void
 }
 
-export default function ProblemModal({ problem, onClose }: Props) {
+export default function ProblemModal({ problem, onClose, onResult }: Props) {
   const panelRef = useRef<HTMLDivElement>(null)
 
   // Lock background scroll + focus management while open.
@@ -48,7 +50,7 @@ export default function ProblemModal({ problem, onClose }: Props) {
     }
   }, [onClose])
 
-  return (
+  return createPortal(
     <motion.div
       className="fixed inset-0 z-[80] flex items-start justify-center overflow-y-auto p-4 md:p-8"
       initial={{ opacity: 0 }}
@@ -105,9 +107,10 @@ export default function ProblemModal({ problem, onClose }: Props) {
 
         {/* Body */}
         <div className="p-6 md:p-8">
-          <CodePanel problem={problem} />
+          <CodePanel problem={problem} onResult={onResult} />
         </div>
       </motion.div>
-    </motion.div>
+    </motion.div>,
+    document.body,
   )
 }

@@ -102,6 +102,36 @@
   background: #ff6b1a;
 }
 
+@keyframes mascotBob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+.mascot-breathe {
+  animation: mascotBob 3.4s ease-in-out infinite;
+}
+
+@keyframes orbitSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes orbitSpinRev {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+.orbit-ring {
+  animation: orbitSpin 30s linear infinite;
+}
+.orbit-pill {
+  animation: orbitSpinRev 30s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

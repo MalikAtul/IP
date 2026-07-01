@@ -61,8 +61,8 @@ export default function ProblemCard({ problem, index, onOpen }: Props) {
       )}
 
       <div className="relative z-10 flex items-center justify-between">
-        <span className="font-mono text-xs text-muted">
-          #{String(problem.id).padStart(2, '0')}
+        <span className="grid h-9 w-9 place-items-center rounded-full bg-orange-grad font-mono text-xs font-bold text-white shadow-glow">
+          {String(problem.id).padStart(2, '0')}
         </span>
         <span className="grid h-8 w-8 place-items-center rounded-full bg-ink-black/[0.04] text-text-dark/50 transition-all duration-300 group-hover:bg-orange group-hover:text-white">
           →

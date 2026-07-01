@@ -14,6 +14,20 @@ export const config = {
   introText: 'Namastee Sir 🙏',
   introDurationMs: 3500,
 
+  // --- Mascot quips (shown in a speech bubble when he's clicked) ----------
+  mascotQuips: [
+    "Let's build something! 🔧",
+    'Run the code! ▶',
+    'Rocket go brrr 🚀',
+    'Made in India 🇮🇳',
+    'Psst — try Explode ▶',
+    'DRISHTI is my baby 🧤',
+    'One more project… 🔒',
+    'Namastee, Sir 🙏',
+    'Beep boop. I am the guide.',
+    'Scroll on, legend.',
+  ] as string[],
+
   // --- Deep Dive: slide deck ----------------------------------------------
   // Paste the embed URL for the Starship slide deck here. Leave empty ("")
   // to show the "Slide deck coming soon." placeholder — zero code change.

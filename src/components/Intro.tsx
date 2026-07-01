@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { config } from '../config'
+import MascotCharacter, { type MascotPose } from './Mascot/MascotCharacter'
 
 interface IntroProps {
   onFinish: () => void
@@ -15,15 +16,31 @@ export default function Intro({ onFinish }: IntroProps) {
   const [visible, setVisible] = useState(true)
   const [muted, setMuted] = useState(true)
   const [offerSound, setOfferSound] = useState(false)
+  const [mascotPose, setMascotPose] = useState<MascotPose>('run')
   const audioRef = useRef<HTMLAudioElement>(null)
   const reduce = useReducedMotion()
 
   const dismiss = useCallback(() => {
+    setMascotPose('superhero-landing')
     setVisible((v) => {
       if (v) window.setTimeout(onFinish, 700) // allow exit animation
       return false
     })
   }, [onFinish])
+
+  // Mascot beat sheet: run in → wave → thumbs-up.
+  useEffect(() => {
+    if (reduce) {
+      setMascotPose('wave')
+      return
+    }
+    const t1 = window.setTimeout(() => setMascotPose('wave'), 1100)
+    const t2 = window.setTimeout(() => setMascotPose('thumbs-up'), 2100)
+    return () => {
+      window.clearTimeout(t1)
+      window.clearTimeout(t2)
+    }
+  }, [reduce])
 
   // Auto-dismiss timer.
   useEffect(() => {
@@ -31,12 +48,17 @@ export default function Intro({ onFinish }: IntroProps) {
     return () => window.clearTimeout(t)
   }, [dismiss, reduce])
 
-  // Any interaction dismisses early and offers sound.
+  // Any deliberate interaction dismisses early and offers sound. A short grace
+  // period prevents a stray wheel/scroll at load (e.g. from Lenis init) from
+  // killing the intro before it's even seen.
   useEffect(() => {
-    const onInteract = () => {
-      setOfferSound(true)
+    const mountedAt = Date.now()
+    const GRACE_MS = 900
+    const onInteract = () => setOfferSound(true)
+    const onDismiss = () => {
+      if (Date.now() - mountedAt < GRACE_MS) return
+      dismiss()
     }
-    const onDismiss = () => dismiss()
     window.addEventListener('keydown', onDismiss)
     window.addEventListener('wheel', onDismiss, { passive: true })
     window.addEventListener('touchmove', onDismiss, { passive: true })
@@ -110,6 +132,16 @@ export default function Intro({ onFinish }: IntroProps) {
           >
             click · scroll · to enter
           </motion.p>
+
+          {/* Mascot runs in from the left and greets */}
+          <motion.div
+            className="mt-6"
+            initial={reduce ? { opacity: 0 } : { x: -360, opacity: 0 }}
+            animate={reduce ? { opacity: 1 } : { x: 0, opacity: 1 }}
+            transition={{ duration: reduce ? 0.4 : 1, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <MascotCharacter pose={mascotPose} size={150} interactive={false} />
+          </motion.div>
 
           {/* Mute / unmute toggle */}
           <button
