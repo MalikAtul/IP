@@ -29,9 +29,9 @@ export const config = {
   ] as string[],
 
   // --- Deep Dive: slide deck ----------------------------------------------
-  // Paste the embed URL for the Starship slide deck here. Leave empty ("")
-  // to show the "Slide deck coming soon." placeholder — zero code change.
-  STARSHIP_DECK_URL: '',
+  // Embed URL for the Starship slide deck. Served from public/, so it's
+  // base-aware (resolves to /IP/Starship_Software_standalone.html in prod).
+  STARSHIP_DECK_URL: `${import.meta.env.BASE_URL}Starship_Software_standalone.html`,
 
   // --- Contact links (placeholders — replace with your own) ---------------
   contact: {

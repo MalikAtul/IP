@@ -14,7 +14,7 @@ interface IntroProps {
  */
 export default function Intro({ onFinish }: IntroProps) {
   const [visible, setVisible] = useState(true)
-  const [muted, setMuted] = useState(true)
+  const [muted, setMuted] = useState(false) // sound ON by default
   const [offerSound, setOfferSound] = useState(false)
   const [mascotPose, setMascotPose] = useState<MascotPose>('run')
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -48,13 +48,31 @@ export default function Intro({ onFinish }: IntroProps) {
     return () => window.clearTimeout(t)
   }, [dismiss, reduce])
 
+  // Keep the audio element in sync with the mute state; sound is ON by default,
+  // so try to start playback immediately (browsers may defer it until the first
+  // user gesture — see the interaction handler below).
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
+    audio.muted = muted
+    if (!muted) {
+      audio.volume = 0.5
+      void audio.play().catch(() => {})
+    }
+  }, [muted])
+
   // Any deliberate interaction dismisses early and offers sound. A short grace
   // period prevents a stray wheel/scroll at load (e.g. from Lenis init) from
   // killing the intro before it's even seen.
   useEffect(() => {
     const mountedAt = Date.now()
     const GRACE_MS = 900
-    const onInteract = () => setOfferSound(true)
+    const onInteract = () => {
+      setOfferSound(true)
+      // First gesture satisfies the browser's autoplay policy — start sound now.
+      const audio = audioRef.current
+      if (audio && !audio.muted) void audio.play().catch(() => {})
+    }
     const onDismiss = () => {
       if (Date.now() - mountedAt < GRACE_MS) return
       dismiss()
@@ -98,9 +116,9 @@ export default function Intro({ onFinish }: IntroProps) {
           role="dialog"
           aria-label="Intro"
         >
-          {/* Hidden looping intro audio (add /public/audio/intro.mp3 later). */}
-          <audio id="intro-audio" ref={audioRef} loop muted preload="auto">
-            <source src={`${import.meta.env.BASE_URL}audio/intro.mp3`} type="audio/mpeg" />
+          {/* Hidden looping intro audio (public/audio/audio.mp3). Sound is on by default. */}
+          <audio id="intro-audio" ref={audioRef} loop autoPlay preload="auto">
+            <source src={`${import.meta.env.BASE_URL}audio/audio.mp3`} type="audio/mpeg" />
           </audio>
 
           <motion.h1
