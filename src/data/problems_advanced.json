@@ -1,0 +1,166 @@
+[
+  {
+    "id": 1,
+    "title": "Joke with delayed punchline",
+    "question": "Display a joke, revealing the punchline only after the user presses Enter.",
+    "technique": "dict store, random.choice, tuple unpacking",
+    "code": "import random\njokes = {\n    \"Why don't scientists trust atoms?\": \"Because they make up everything!\",\n    \"Why did the programmer quit his job?\": \"Because he didn't get arrays!\",\n    \"Why do Python devs prefer snakes?\": \"Because they don't need braces!\",\n}\nsetup, punch = random.choice(list(jokes.items()))\nprint(setup)\ninput(\"Press Enter for the punchline... \")\nprint(punch)",
+    "stdin": "\n",
+    "expected_output": "Why do Python devs prefer snakes?\nPress Enter for the punchline... Because they don't need braces!",
+    "note": "Joke is chosen at random, so the output changes every run."
+  },
+  {
+    "id": 2,
+    "title": "Days left in current month",
+    "question": "Read today's date (day part) and show how many days are left in the current month.",
+    "technique": "datetime, calendar.monthrange, f-string date formatting",
+    "code": "import datetime, calendar\ntoday = datetime.date.today()\nday = int(input(\"Enter today's date (day): \"))\nlast = calendar.monthrange(today.year, today.month)[1]\nprint(f\"{last - day} days left in {today:%B}.\")",
+    "stdin": "15\n",
+    "expected_output": "Enter today's date (day): 15 days left in June.",
+    "note": "Auto-detects the month, so output depends on the current date."
+  },
+  {
+    "id": 3,
+    "title": "Output 5, 10, 9",
+    "question": "Start from 5, double it to 10, subtract 1 to get 9 — print each on its own line.",
+    "technique": "iterable unpacking into print, sep",
+    "code": "n = 5\nprint(*[n, 2*n, 2*n - 1], sep=\"\\n\")",
+    "stdin": "",
+    "expected_output": "5\n10\n9"
+  },
+  {
+    "id": 4,
+    "title": "Output 5@10@9",
+    "question": "Same values as before, but printed as 5@10@9.",
+    "technique": "unpacking with a custom separator",
+    "code": "n = 5\nprint(*[n, 2*n, 2*n - 1], sep=\"@\")",
+    "stdin": "",
+    "expected_output": "5@10@9"
+  },
+  {
+    "id": 5,
+    "title": "First five multiples (max 3 lines)",
+    "question": "Assign the first five multiples of a number to five variables and print them.",
+    "technique": "generator expression unpacked into five names",
+    "code": "n = int(input(\"Enter a number: \"))\na, b, c, d, e = (n*i for i in range(1, 6))\nprint(a, b, c, d, e)",
+    "stdin": "7\n",
+    "expected_output": "Enter a number: 7 14 21 28 35"
+  },
+  {
+    "id": 6,
+    "title": "Area of a circle",
+    "question": "Accept the radius of a circle and print its area.",
+    "technique": "math.pi, f-string precision formatting",
+    "code": "import math\nr = float(input(\"Enter radius: \"))\nprint(f\"Area = {math.pi * r**2:.2f}\")",
+    "stdin": "5\n",
+    "expected_output": "Enter radius: Area = 78.54"
+  },
+  {
+    "id": 7,
+    "title": "Average of five marks",
+    "question": "Accept marks in five subjects and output the average.",
+    "technique": "statistics.mean, list comprehension, split",
+    "code": "from statistics import mean\nmarks = [float(x) for x in input(\"Enter 5 marks (space-separated): \").split()]\nprint(f\"Average = {mean(marks):.2f}\")",
+    "stdin": "80 75 90 60 95\n",
+    "expected_output": "Enter 5 marks (space-separated): Average = 80.00"
+  },
+  {
+    "id": 8,
+    "title": "Height: cm to feet & inches",
+    "question": "Ask for height in centimetres and convert to feet and inches.",
+    "technique": "divmod for quotient+remainder in one call",
+    "code": "cm = float(input(\"Enter height in cm: \"))\nfeet, inches = divmod(cm / 2.54, 12)\nprint(f\"{int(feet)} ft {inches:.1f} in\")",
+    "stdin": "170\n",
+    "expected_output": "Enter height in cm: 5 ft 6.9 in"
+  },
+  {
+    "id": 9,
+    "title": "n squared, cubed, fourth",
+    "question": "Read a number n and print n^2, n^3 and n^4.",
+    "technique": "generator of f-strings, unpacked with sep",
+    "code": "n = int(input(\"Enter a number: \"))\nprint(*(f\"n^{p} = {n**p}\" for p in (2, 3, 4)), sep=\"\\n\")",
+    "stdin": "3\n",
+    "expected_output": "Enter a number: n^2 = 9\nn^3 = 27\nn^4 = 81"
+  },
+  {
+    "id": 10,
+    "title": "Area of a triangle (Heron's)",
+    "question": "Find the area of a triangle.",
+    "technique": "Heron's formula, math.sqrt, unpacking three sides",
+    "code": "import math\na, b, c = (float(x) for x in input(\"Enter three sides (space-separated): \").split())\ns = (a + b + c) / 2\nprint(f\"Area = {math.sqrt(s*(s-a)*(s-b)*(s-c)):.2f}\")",
+    "stdin": "3 4 5\n",
+    "expected_output": "Enter three sides (space-separated): Area = 6.00"
+  },
+  {
+    "id": 11,
+    "title": "Simple & compound interest",
+    "question": "Compute simple interest and compound interest.",
+    "technique": "one-line unpacking, f-string with newline",
+    "code": "p, r, t = (float(x) for x in input(\"Enter principal, rate, time (space-separated): \").split())\nsi = p * r * t / 100\nci = p * ((1 + r/100)**t - 1)\nprint(f\"Simple Interest = {si:.2f}\\nCompound Interest = {ci:.2f}\")",
+    "stdin": "1000 5 2\n",
+    "expected_output": "Enter principal, rate, time (space-separated): Simple Interest = 100.00\nCompound Interest = 102.50"
+  },
+  {
+    "id": 12,
+    "title": "First five multiples",
+    "question": "Input a number and print its first five multiples.",
+    "technique": "generator expression unpacked into print",
+    "code": "n = int(input(\"Enter a number: \"))\nprint(*(n*i for i in range(1, 6)))",
+    "stdin": "4\n",
+    "expected_output": "Enter a number: 4 8 12 16 20"
+  },
+  {
+    "id": 13,
+    "title": "Student details, two ways",
+    "question": "Read name, class, age; print them on one line, then on separate lines with two blank lines between.",
+    "technique": "comprehension to gather inputs, unpacking + str.join",
+    "code": "fields = [input(f\"Enter {k}: \") for k in (\"name\", \"class\", \"age\")]\nprint(*fields)\nprint(\"\\n\"*2 + \"\\n\".join(fields))",
+    "stdin": "Atul\n11\n16\n",
+    "expected_output": "Enter name: Enter class: Enter age: Atul 11 16\n\n\nAtul\n11\n16"
+  },
+  {
+    "id": 14,
+    "title": "Replace first two with sums",
+    "question": "Read three numbers; replace the first two with (first+second) and (second+third).",
+    "technique": "simultaneous tuple assignment",
+    "code": "a, b, c = (int(x) for x in input(\"Enter three numbers (space-separated): \").split())\nprint(\"Before:\", a, b, c)\na, b = a + b, b + c\nprint(\"After:\", a, b, c)",
+    "stdin": "2 3 4\n",
+    "expected_output": "Enter three numbers (space-separated): Before: 2 3 4\nAfter: 5 7 4"
+  },
+  {
+    "id": 15,
+    "title": "Profit earned",
+    "question": "Input cost price and selling price, print the profit.",
+    "technique": "unpacking, inline arithmetic in f-string",
+    "code": "cp, sp = (float(x) for x in input(\"Enter cost and selling price (space-separated): \").split())\nprint(f\"Profit = {sp - cp:.2f}\")",
+    "stdin": "100 150\n",
+    "expected_output": "Enter cost and selling price (space-separated): Profit = 50.00"
+  },
+  {
+    "id": 16,
+    "title": "Debt-to-Equity ratio",
+    "question": "Input total liabilities and shareholders' equity, print the D/E ratio.",
+    "technique": "unpacking, f-string ratio",
+    "code": "liab, equity = (float(x) for x in input(\"Enter liabilities and shareholders' equity: \").split())\nprint(f\"D/E Ratio = {liab / equity:.2f}\")",
+    "stdin": "400000 200000\n",
+    "expected_output": "Enter liabilities and shareholders' equity: D/E Ratio = 2.00"
+  },
+  {
+    "id": 17,
+    "title": "Equity multiplier",
+    "question": "Input total assets and total equity, print the equity multiplier.",
+    "technique": "unpacking, f-string ratio",
+    "code": "assets, equity = (float(x) for x in input(\"Enter total assets and total equity: \").split())\nprint(f\"Equity Multiplier = {assets / equity:.2f}\")",
+    "stdin": "1000000 250000\n",
+    "expected_output": "Enter total assets and total equity: Equity Multiplier = 4.00"
+  },
+  {
+    "id": 18,
+    "title": "Gross / net profit & percentage",
+    "question": "Accept COGS, revenue and operating costs; print gross profit, net profit and net profit %.",
+    "technique": "unpacking, chained derivation, multi-line f-string",
+    "code": "cogs, rev, oc = (float(x) for x in input(\"Enter COGS, revenue, operating costs: \").split())\ngross = rev - cogs\nnet = gross - oc\nprint(f\"Gross Profit = {gross:.2f}\\nNet Profit = {net:.2f}\\nNet Profit % = {net/rev*100:.2f}%\")",
+    "stdin": "50000 120000 20000\n",
+    "expected_output": "Enter COGS, revenue, operating costs: Gross Profit = 70000.00\nNet Profit = 50000.00\nNet Profit % = 41.67%"
+  }
+]

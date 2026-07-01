@@ -1,0 +1,145 @@
+import { useEffect, useRef, useState, useCallback } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { config } from '../config'
+
+interface IntroProps {
+  onFinish: () => void
+}
+
+/**
+ * Full-screen near-black preloader. The intro words emerge from deep z-space
+ * (tiny, far, blurred → sharp, centered, warm glow). Dissolves after
+ * ~introDurationMs or on any click / scroll / key press.
+ */
+export default function Intro({ onFinish }: IntroProps) {
+  const [visible, setVisible] = useState(true)
+  const [muted, setMuted] = useState(true)
+  const [offerSound, setOfferSound] = useState(false)
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const reduce = useReducedMotion()
+
+  const dismiss = useCallback(() => {
+    setVisible((v) => {
+      if (v) window.setTimeout(onFinish, 700) // allow exit animation
+      return false
+    })
+  }, [onFinish])
+
+  // Auto-dismiss timer.
+  useEffect(() => {
+    const t = window.setTimeout(dismiss, reduce ? 900 : config.introDurationMs)
+    return () => window.clearTimeout(t)
+  }, [dismiss, reduce])
+
+  // Any interaction dismisses early and offers sound.
+  useEffect(() => {
+    const onInteract = () => {
+      setOfferSound(true)
+    }
+    const onDismiss = () => dismiss()
+    window.addEventListener('keydown', onDismiss)
+    window.addEventListener('wheel', onDismiss, { passive: true })
+    window.addEventListener('touchmove', onDismiss, { passive: true })
+    window.addEventListener('pointerdown', onInteract)
+    return () => {
+      window.removeEventListener('keydown', onDismiss)
+      window.removeEventListener('wheel', onDismiss)
+      window.removeEventListener('touchmove', onDismiss)
+      window.removeEventListener('pointerdown', onInteract)
+    }
+  }, [dismiss])
+
+  const toggleMute = () => {
+    const audio = audioRef.current
+    if (!audio) return
+    if (muted) {
+      audio.muted = false
+      audio.volume = 0.5
+      void audio.play().catch(() => {})
+      setMuted(false)
+    } else {
+      audio.muted = true
+      setMuted(true)
+    }
+  }
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          key="intro"
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-ink-black"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0, filter: 'blur(8px)' }}
+          transition={{ duration: 0.7, ease: 'easeInOut' }}
+          onClick={dismiss}
+          role="dialog"
+          aria-label="Intro"
+        >
+          {/* Hidden looping intro audio (add /public/audio/intro.mp3 later). */}
+          <audio id="intro-audio" ref={audioRef} loop muted preload="auto">
+            <source src={`${import.meta.env.BASE_URL}audio/intro.mp3`} type="audio/mpeg" />
+          </audio>
+
+          <motion.h1
+            className="select-none text-center text-5xl font-black tracking-tight md:text-7xl"
+            style={{
+              color: '#FFB877',
+              textShadow: '0 0 40px rgba(255,138,61,0.55), 0 0 120px rgba(255,107,26,0.35)',
+            }}
+            initial={
+              reduce
+                ? { opacity: 0 }
+                : { opacity: 0, scale: 0.2, filter: 'blur(14px)', z: -400 }
+            }
+            animate={
+              reduce
+                ? { opacity: 1 }
+                : { opacity: 1, scale: 1, filter: 'blur(0px)', z: 0 }
+            }
+            transition={{ duration: reduce ? 0.5 : 2.4, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {config.introText}
+          </motion.h1>
+
+          <motion.p
+            className="mt-6 text-xs uppercase tracking-[0.35em] text-text-light/40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: reduce ? 0.4 : 1.6, duration: 1 }}
+          >
+            click · scroll · to enter
+          </motion.p>
+
+          {/* Mute / unmute toggle */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              toggleMute()
+            }}
+            data-cursor="hover"
+            aria-label={muted ? 'Enable sound' : 'Mute sound'}
+            className="absolute bottom-8 right-8 flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-xs text-text-light/70 transition-colors hover:border-orange hover:text-orange"
+          >
+            {muted ? '🔇 Sound off' : '🔊 Sound on'}
+          </button>
+
+          {offerSound && muted && (
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={(e) => {
+                e.stopPropagation()
+                toggleMute()
+              }}
+              data-cursor="hover"
+              className="absolute bottom-8 left-8 rounded-full bg-orange/90 px-4 py-2 text-xs font-semibold text-white"
+            >
+              Enable sound?
+            </motion.button>
+          )}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
