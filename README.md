@@ -12,11 +12,23 @@ Deployable to **GitHub Pages** with the included GitHub Actions workflow.
 
 ## ✨ Features
 
-- **Cinematic intro / preloader** — "Namastee Sir 🙏" emerges from deep z-space,
-  with a hidden looping audio element + mute/unmute toggle.
+- **Mascot guide character** — a custom SVG doodle (`<MascotCharacter pose=… />`)
+  with 16 hand-built poses (`idle · wave · point-* · thinking · celebrate ·
+  dance · run · sit-type · sit-chill · explain · mind-blown · thumbs-up ·
+  facepalm · superhero-landing`). He breathes, blinks and looks around when
+  idle, follows the cursor in the hero, reacts per-section (celebrates a clean
+  code run, facepalms a traceback, is mind-blown by the Starship, jumps on
+  Explode), plays a random pose on hover, and pops a speech-bubble quip on click.
+- **Cinematic intro / preloader** — the mascot runs in and waves while
+  "Namastee Sir 🙏" emerges from deep z-space; hidden looping audio +
+  mute/unmute toggle; superhero-landing on enter.
 - **Reactive hero** — a distorted icosahedron shader-blob that responds to
-  pointer and scroll.
-- **About / Creator** — parallax + reveal-on-scroll storytelling.
+  pointer and scroll, with orbiting tech-stack logo pills (Python, React,
+  Three.js, GitHub) and the cursor-following mascot.
+- **About / Creator** — parallax + reveal-on-scroll; expandable project cards
+  (DRISHTI with a classified “dual-use” stamp, TechnoXian, Confidential ×2), a
+  standalone Ministry-of-Defence affiliation block, a logo tech-stack grid,
+  count-up stats, and a cinematic “Building toward” block.
 - **Python showcase** — every problem from `src/data/problems_advanced.json`
   rendered as a tilt/glow/magnetic card. Open one to get a **Monaco** editor
   (self-hosted, editable), an editable **stdin** box, a **Run ▶** button, and a
@@ -26,8 +38,10 @@ Deployable to **GitHub Pages** with the included GitHub Actions workflow.
   Three.js primitives (no GLTF). Orbit it, then **Explode** to fan every
   subsystem apart with GSAP; each part gets a floating label and a slide-in side
   panel with its software/systems story. Below it, a 16:9 slide-deck embed.
-- **"Life everywhere"** — custom cursor, magnetic buttons, hover tilt, ambient
-  particles, split-text reveals, smooth anchor nav, idle 3D animation.
+- **"Life everywhere"** — custom cursor + trailing follower, magnetic buttons,
+  hover tilt on cards, a top scroll-progress bar, number counters that count up
+  in view, subtle scroll-velocity page tilt, ambient particles, split-text
+  reveals, smooth anchor nav, idle 3D animation.
 - **Accessible & responsive** — keyboard nav, focus trap on the modal, aria
   labels, `prefers-reduced-motion` fallbacks, and lighter 3D on mobile.
 

@@ -1,16 +1,18 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-import { useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import StarshipModel from './StarshipModel'
 import StarshipSidePanel from '../components/StarshipSidePanel'
+import MascotCharacter from '../components/Mascot/MascotCharacter'
 import { config } from '../config'
 import { useLowPower } from '../lib/useIsMobile'
 import type { PartKey } from './starshipParts'
 
 export default function StarshipExplorer() {
   const [exploded, setExploded] = useState(false)
+  const [everToggled, setEverToggled] = useState(false)
   const [hovered, setHovered] = useState<PartKey | null>(null)
   const [selected, setSelected] = useState<PartKey | null>(null)
   const [autoRotate, setAutoRotate] = useState(false)
@@ -83,6 +85,7 @@ export default function StarshipExplorer() {
       {/* Explode / Reset control */}
       <button
         onClick={() => {
+          setEverToggled(true)
           setExploded((e) => !e)
           if (exploded) setSelected(null)
         }}
@@ -91,6 +94,18 @@ export default function StarshipExplorer() {
       >
         {exploded ? 'Reset ↺' : 'Explode ▶'}
       </button>
+
+      {/* Mascot stands below, awed — jumps back when the ship explodes */}
+      <motion.div
+        className="pointer-events-auto absolute bottom-2 left-3 z-20 hidden md:block"
+        animate={reduce ? {} : { y: exploded ? [0, -26, 0] : 0, x: exploded ? [0, -10, 0] : 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <MascotCharacter
+          pose={exploded ? 'mind-blown' : everToggled ? 'explain' : 'mind-blown'}
+          size={104}
+        />
+      </motion.div>
 
       {/* Hint */}
       <div className="pointer-events-none absolute left-5 top-5 z-10 max-w-xs text-xs text-text-light/60">

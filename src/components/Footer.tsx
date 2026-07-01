@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react'
 import { config } from '../config'
 import MagneticButton from './MagneticButton'
 import SplitText from './SplitText'
+import MascotCharacter from './Mascot/MascotCharacter'
 import { scrollToId } from '../lib/useSmoothScroll'
 
 const ParticleField = lazy(() => import('../scenes/ParticleField'))
@@ -25,12 +26,20 @@ export default function Footer() {
       </div>
 
       <div className="container-page relative z-10 py-24 md:py-32">
-        <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-orange-light">
-          Contact
-        </p>
-        <h2 className="max-w-3xl text-4xl font-black leading-tight md:text-6xl">
-          <SplitText text="Let's build something that matters." as="span" />
-        </h2>
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-orange-light">
+              Contact
+            </p>
+            <h2 className="max-w-3xl text-4xl font-black leading-tight md:text-6xl">
+              <SplitText text="Let's build something that matters." as="span" />
+            </h2>
+          </div>
+          {/* tiny mascot says bye */}
+          <div className="hidden shrink-0 sm:block">
+            <MascotCharacter pose="wave" size={92} />
+          </div>
+        </div>
 
         <div className="mt-10 flex flex-wrap gap-3">
           {LINKS.map((l) => (

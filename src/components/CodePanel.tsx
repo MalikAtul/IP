@@ -8,11 +8,12 @@ import { config } from '../config'
 
 interface CodePanelProps {
   problem: Problem
+  onResult?: (ok: boolean) => void
 }
 
 type Status = 'idle' | 'loading' | 'running' | 'done' | 'error'
 
-export default function CodePanel({ problem }: CodePanelProps) {
+export default function CodePanel({ problem, onResult }: CodePanelProps) {
   const [code, setCode] = useState(problem.code)
   const [stdin, setStdin] = useState(problem.stdin)
   const [output, setOutput] = useState('')
@@ -71,7 +72,8 @@ export default function CodePanel({ problem }: CodePanelProps) {
     setIsError(!result.ok)
     setOutput(combined || '(no output)')
     setStatus(result.ok ? 'done' : 'error')
-  }, [code, stdin])
+    onResult?.(result.ok)
+  }, [code, stdin, onResult])
 
   const onEditorMount: OnMount = (_editor, monaco) => {
     monaco.editor.defineTheme('atul-charcoal', {

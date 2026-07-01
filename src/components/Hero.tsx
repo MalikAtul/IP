@@ -1,14 +1,24 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { config } from '../config'
 import SplitText from './SplitText'
 import MagneticButton from './MagneticButton'
+import HeroOrbit from './HeroOrbit'
+import MascotCharacter from './Mascot/MascotCharacter'
 import { scrollToId } from '../lib/useSmoothScroll'
 
 // The 3D blob is heavy — load it lazily so first paint stays fast.
 const HeroBlob = lazy(() => import('../scenes/HeroBlob'))
 
 export default function Hero() {
+  // Mascot sits and chills, then points onward once you scroll past the hero.
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > window.innerHeight * 0.35)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
     <section id="home" className="relative flex min-h-[100svh] items-center overflow-hidden">
       {/* Reactive 3D centerpiece */}
@@ -18,9 +28,21 @@ export default function Hero() {
         </Suspense>
       </div>
 
+      {/* Orbiting tech-stack pills around the centerpiece */}
+      <HeroOrbit />
+
       {/* Soft warm glows */}
       <div className="pointer-events-none absolute -left-40 top-1/4 -z-10 h-96 w-96 rounded-full bg-orange-light/20 blur-3xl" />
       <div className="pointer-events-none absolute -right-40 bottom-1/4 -z-10 h-96 w-96 rounded-full bg-orange/10 blur-3xl" />
+
+      {/* Mascot companion — sits bottom-right, follows the cursor */}
+      <div className="absolute bottom-0 right-4 z-10 hidden md:block lg:right-16">
+        <MascotCharacter
+          pose={scrolled ? 'point-right' : 'sit-chill'}
+          size={130}
+          followCursor={!scrolled}
+        />
+      </div>
 
       <div className="container-page relative z-10">
         <motion.p
